@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">CitizenTech</string>
+    <string name="brand_title_prefix">citizen</string>
+    <string name="brand_title_suffix">tech</string>
+    <string name="brand_subtitle">ACESSIBILIDADE URBANA</string>
+    <string name="brand_tagline">Mais informação. Mais autonomia.</string>
+
+    <string name="nav_explore">Explorar</string>
+    <string name="nav_reports">Relatos</string>
+    <string name="nav_alerts">Alertas</string>
+    <string name="nav_profile">Perfil</string>
+
+    <string name="cd_brand_home">Ir para início</string>
+    <string name="cd_profile_shortcut">Abrir perfil</string>
+    <string name="cd_back_explore">Voltar para explorar</string>
+    <string name="cd_back_reports">Voltar para meus relatos</string>
+    <string name="cd_decrease_font">Diminuir texto</string>
+    <string name="cd_increase_font">Aumentar texto</string>
+
+    <string name="demo_mode_badge">Modo demonstração</string>
+    <string name="api_mode_badge">API conectada</string>
+    <string name="loading_city">Preparando sua cidade...</string>
+    <string name="retry_button">Tentar novamente</string>
+</resources>

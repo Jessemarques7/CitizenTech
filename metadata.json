@@ -1,0 +1,6 @@
+{
+  "name": "CitizenTech",
+  "description": "Acessibilidade Urbana Inteligente: consulte condições de locais, registre barreiras urbanas, acompanhe alertas simulados de sensores e personalize seu trajeto.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#12313d" />
+  <meta name="description" content="CitizenTech - informação para circular pela cidade com mais autonomia." />
+  <title>CitizenTech | Mais informação. Mais autonomia.</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-frame">
+    <header class="topbar">
+      <button class="brand" data-action="nav" data-screen="home" aria-label="Ir para início">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 4.5c-7.2 0-13 5.5-13 12.3C7 26 20 36 20 36s13-10 13-19.2C33 10 27.2 4.5 20 4.5Z"/><circle cx="20" cy="17" r="5.1"/><path d="M20 22.3v6.1"/></svg></span>
+        <span class="brand-word">citizen<span>tech</span><small>ACESSIBILIDADE URBANA</small></span>
+      </button>
+      <button class="icon-button profile-shortcut" data-action="nav" data-screen="profile" aria-label="Abrir perfil">
+        <span class="avatar">A</span>
+      </button>
+    </header>
+
+    <main id="screenRoot" tabindex="-1" aria-live="polite">
+      <section class="loading-state"><span class="loader"></span><p>Preparando sua cidade...</p></section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navegação principal">
+      <button class="nav-item active" data-action="nav" data-screen="home"><span class="nav-icon">⌖</span><span>Explorar</span></button>
+      <button class="nav-item" data-action="nav" data-screen="reports"><span class="nav-icon">▤</span><span>Relatos</span></button>
+      <button class="nav-item" data-action="nav" data-screen="alerts"><span class="nav-icon">♧</span><span>Alertas</span><i class="nav-dot" aria-hidden="true"></i></button>
+      <button class="nav-item" data-action="nav" data-screen="profile"><span class="nav-icon">◎</span><span>Perfil</span></button>
+    </nav>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="api.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
