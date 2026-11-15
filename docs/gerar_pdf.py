@@ -11,6 +11,7 @@ import html
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 DOCS = Path(__file__).resolve().parent
@@ -113,13 +114,22 @@ def main():
         print(f"Navegador não encontrado. Abra {final} e use Imprimir > Salvar como PDF.")
         return 1
     pdf = DOCS / "CitizenTech_Entregaveis.pdf"
+    pdf.unlink(missing_ok=True)
     # Perfil separado: sem ele o navegador pode repassar o pedido a uma janela já aberta e não gerar o PDF.
     subprocess.run([exe, "--headless", "--disable-gpu", "--no-pdf-header-footer",
                     f"--user-data-dir={build / 'perfil-navegador'}",
                     f"--print-to-pdf={pdf}", final.as_uri()], check=True, timeout=120,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    print(f"PDF gerado: {pdf}")
-    return 0
+    # O Edge pode terminar o comando antes de gravar o arquivo: espera o PDF aparecer e parar de crescer.
+    tamanho = -1
+    for _ in range(120):
+        if pdf.exists() and pdf.stat().st_size > 0 and pdf.stat().st_size == tamanho:
+            print(f"PDF gerado: {pdf}")
+            return 0
+        tamanho = pdf.stat().st_size if pdf.exists() else -1
+        time.sleep(0.5)
+    print("O navegador não gerou o PDF a tempo. Abra docs/build/entregaveis_final.html e use Imprimir > Salvar como PDF.")
+    return 1
 
 
 if __name__ == "__main__":
