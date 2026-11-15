@@ -66,6 +66,8 @@ fun ReportsScreen(
     onNewReportClick: () -> Unit,
     onDeleteReport: (String) -> Unit,
     modifier: Modifier = Modifier,
+    isAdmin: Boolean = false,
+    onAdvanceStatus: (id: String, novoStatus: String) -> Unit = { _, _ -> },
 ) {
     val colors = LocalCitizenTechColors.current
     val filtered = uiState.filteredOcorrencias
@@ -122,7 +124,7 @@ fun ReportsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "Meus relatos",
+                            text = if (isAdmin) "Relatos da cidade" else "Meus relatos",
                             style = MaterialTheme.typography.headlineMedium,
                             color = colors.navy,
                         )
@@ -130,7 +132,11 @@ fun ReportsScreen(
                     }
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Acompanhe o andamento das barreiras que você compartilhou.",
+                        text = if (isAdmin) {
+                            "Perfil administrador: avance o andamento dos relatos de todos os cidadãos."
+                        } else {
+                            "Acompanhe o andamento das barreiras que você compartilhou."
+                        },
                         style = MaterialTheme.typography.bodyMedium,
                         color = colors.muted,
                     )
@@ -227,6 +233,8 @@ fun ReportsScreen(
                     ReportCard(
                         report = report,
                         onCancelClick = { pendingDeleteId = report.id },
+                        isAdmin = isAdmin,
+                        onAdvanceStatus = onAdvanceStatus,
                     )
                 }
             }
@@ -244,6 +252,8 @@ fun ReportsScreen(
 private fun ReportCard(
     report: Ocorrencia,
     onCancelClick: () -> Unit,
+    isAdmin: Boolean,
+    onAdvanceStatus: (id: String, novoStatus: String) -> Unit,
 ) {
     val colors = LocalCitizenTechColors.current
     val progress = (report.progresso.coerceIn(4, 100)) / 100f
@@ -267,7 +277,7 @@ private fun ReportCard(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     StatusTag(text = report.status)
-                    if (report.status.equals("Recebida", ignoreCase = true)) {
+                    if (isAdmin || report.status.equals("Recebida", ignoreCase = true)) {
                         IconButton(
                             onClick = onCancelClick,
                             modifier = Modifier.size(36.dp),
@@ -342,6 +352,25 @@ private fun ReportCard(
                         .clip(RoundedCornerShape(9.dp))
                         .background(colors.teal),
                 )
+            }
+
+            val proximo = ReportStatuses.proximo(report.status)
+            if (isAdmin && proximo != null) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Button(
+                    onClick = { onAdvanceStatus(report.id, proximo) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .testTag("report_advance_${report.id}"),
+                    shape = RoundedCornerShape(11.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.navy,
+                        contentColor = Color.White,
+                    ),
+                ) {
+                    Text("Marcar como \"$proximo\"", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                }
             }
         }
     }

@@ -31,7 +31,13 @@ data class CitizenTechUiState(
     val isSavingPreferences: Boolean = false,
     val reportSubmitSuccessEvent: Long? = null,
     val snackbarMessage: String? = null,
+    val isAuthenticating: Boolean = false,
+    val authError: String? = null,
 ) {
+    /** Com a API ligada, o app exige login antes de mostrar as telas. */
+    val precisaLogin: Boolean
+        get() = apiConfig.useApiMode && !apiConfig.isLoggedIn
+
     val filteredLocais: List<LocalAcessivel>
         get() {
             val q = searchQuery.trim().lowercase()

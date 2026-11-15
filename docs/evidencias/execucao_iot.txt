@@ -1,0 +1,32 @@
+CitizenTech IoT | API http://localhost:8081/api | cenario 'pico': todos os sensores vao ao pico no ultimo ciclo e depois normalizam
+  - OCUP-BIB-01   ocupacao  @ biblioteca       Contagem agregada de pessoas na Biblioteca Central (sensor de passagem na porta, sem camera e sem identificar ninguem).
+  - OCUP-TER-01   ocupacao  @ terminal         Contagem agregada de pessoas no Terminal Central.
+  - CHUVA-CUL-01  chuva     @ centro-cultural  Pluviometro (intensidade de chuva) no entorno do Centro Cultural / Praca das Artes.
+  - CHUVA-TER-01  chuva     @ terminal         Pluviometro no entorno do Terminal Central.
+Leituras SIMULADAS - nao sao dados oficiais.
+
+[20:45:00] ciclo 1 -> HTTP 201
+    OCUP-BIB-01      19.0 (limite 35) ok
+    OCUP-TER-01      31.0 (limite 60) ok
+    CHUVA-CUL-01      3.2 (limite 30) ok  >> encerrou AL-303
+    CHUVA-TER-01      2.4 (limite 30) ok  >> encerrou AL-302
+[20:45:01] ciclo 2 -> HTTP 201
+    OCUP-BIB-01      22.0 (limite 35) ok
+    OCUP-TER-01      23.0 (limite 60) ok
+    CHUVA-CUL-01      0.8 (limite 30) ok
+    CHUVA-TER-01      3.5 (limite 30) ok
+[20:45:02] ciclo 3 -> HTTP 201
+    OCUP-BIB-01      19.0 (limite 35) ok
+    OCUP-TER-01      23.0 (limite 60) ok
+    CHUVA-CUL-01      5.7 (limite 30) ok
+    CHUVA-TER-01      2.5 (limite 30) ok
+[20:45:03] ciclo 4 -> HTTP 201
+    OCUP-BIB-01      25.0 (limite 35) ok
+    OCUP-TER-01      27.0 (limite 60) ok
+    CHUVA-CUL-01      5.5 (limite 30) ok
+    CHUVA-TER-01      0.8 (limite 30) ok
+[20:45:04] ciclo 5 -> HTTP 201
+    OCUP-BIB-01      50.0 (limite 35) ACIMA DO LIMITE  >> ALERTA AL-304 gerado
+    OCUP-TER-01      84.0 (limite 60) ACIMA DO LIMITE  >> ALERTA AL-305 gerado
+    CHUVA-CUL-01     38.1 (limite 30) ACIMA DO LIMITE  >> ALERTA AL-306 gerado
+    CHUVA-TER-01     34.0 (limite 30) ACIMA DO LIMITE  >> ALERTA AL-307 gerado

@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>CitizenTech - Entregáveis Global Solution 2026/2</title>
+<style>
+  @page { size: A4; margin: 16mm 14mm; }
+  :root { --navy:#12313D; --teal:#087F78; --mint:#E3F3EF; --muted:#5d7176; --line:#d5e2de; --amber:#A45D08; --red:#A83E39; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color:#18333B; font-size:10.5pt; line-height:1.45; margin:0; }
+  h1 { color:var(--navy); font-size:26pt; margin:0 0 6px; }
+  h2 { color:var(--navy); font-size:16pt; border-bottom:3px solid var(--teal); padding-bottom:4px; margin:0 0 10px; page-break-after:avoid; }
+  h3 { color:var(--teal); font-size:12pt; margin:16px 0 6px; page-break-after:avoid; }
+  p { margin:4px 0 8px; }
+  section { page-break-before: always; }
+  .capa { height: 255mm; display:flex; flex-direction:column; justify-content:center; }
+  .eyebrow { color:var(--teal); font-weight:700; letter-spacing:2px; font-size:9.5pt; text-transform:uppercase; }
+  .tag { display:inline-block; background:var(--mint); color:var(--navy); border-radius:999px; padding:1px 9px; font-size:8.5pt; font-weight:700; margin-right:4px; }
+  table { width:100%; border-collapse:collapse; margin:6px 0 10px; font-size:9pt; page-break-inside:auto; }
+  tr { page-break-inside:avoid; }
+  th { background:var(--navy); color:#fff; text-align:left; padding:5px 6px; font-weight:600; }
+  td { border-bottom:1px solid var(--line); padding:4px 6px; vertical-align:top; }
+  tr:nth-child(even) td { background:#f6faf8; }
+  code, pre { font-family: Consolas, "Courier New", monospace; font-size:8.5pt; }
+  code { background:#eef4f2; padding:0 3px; border-radius:3px; }
+  pre { background:#0f2a33; color:#e3f3ef; padding:10px; border-radius:6px; white-space:pre-wrap; word-break:break-word; page-break-inside:auto; }
+  .box { border:1px solid var(--line); border-left:4px solid var(--teal); background:#f8fbfa; padding:8px 12px; border-radius:4px; margin:8px 0; }
+  .ok { color:#176C4D; font-weight:700; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .muted { color:var(--muted); }
+  .pts { float:right; font-size:10pt; color:var(--muted); font-weight:600; }
+  svg text { font-family: "Segoe UI", Arial, sans-serif; }
+</style>
+</head>
+<body>
+
+<div class="capa">
+  <div class="eyebrow">FIAP · Global Solution 2026/2 · 3ESOA</div>
+  <h1>CitizenTech</h1>
+  <p style="font-size:14pt;color:var(--teal);font-weight:600;margin-top:0">Acessibilidade Urbana Inteligente · Mais informação. Mais autonomia.</p>
+  <p style="max-width:150mm">MVP full stack: banco de dados Oracle, API REST em Java (Spring Boot) com autenticação JWT e perfis de acesso,
+    app Android (Kotlin/Jetpack Compose) que consome a API e simulação de sensores IoT que geram alertas.</p>
+  <h3>Integrantes</h3>
+  <table style="max-width:150mm">
+    <tr><th>Nome</th><th>RM</th></tr>
+    <!-- PREENCHER com os integrantes do grupo (mesmos nomes do integrantes.txt) -->
+    <tr><td>[Nome completo]</td><td>[RM]</td></tr>
+    <tr><td>[Nome completo]</td><td>[RM]</td></tr>
+    <tr><td>[Nome completo]</td><td>[RM]</td></tr>
+    <tr><td>[Nome completo]</td><td>[RM]</td></tr>
+    <tr><td>[Nome completo]</td><td>[RM]</td></tr>
+  </table>
+  <p><b>Vídeo pitch:</b> [LINK PÚBLICO DO VÍDEO]<br>
+     <b>Repositório:</b> https://github.com/Jessemarques7/CitizenTech</p>
+  <h3>Sumário</h3>
+  <p>0. Visão geral e ODS · 1. Banco de dados · 2. API RESTful · 3. Plano de testes · 4. Frontend mobile · 5. Segurança · 6. Simulação de IoT · 7. Como executar · 8. Uso de IA</p>
+</div>
+
+<section>
+  <h2>0. Visão geral</h2>
+  <p><b>Cidadão beneficiado:</b> pessoas com deficiência ou mobilidade reduzida, idosos, gestantes e quem circula com carrinho de bebê.</p>
+  <p><b>Problema:</b> elas não sabem com antecedência se um local público tem rampa, banheiro acessível, elevador funcionando ou se está lotado. Barreiras (calçada quebrada, rampa bloqueada) não chegam a quem pode resolvê-las, e chuva forte deixa trajetos perigosos.</p>
+  <p><b>Solução:</b> o app mostra a acessibilidade de cada local (recursos e obstáculos), a ocupação estimada por sensores e alertas de chuva intensa. O cidadão relata barreiras e acompanha o andamento; o administrador (prefeitura/zeladoria) prioriza e atualiza os relatos.</p>
+  <h3>Arquitetura</h3>
+  <table>
+    <tr><th>Camada</th><th>Tecnologia</th><th>Pasta</th></tr>
+    <tr><td>Banco de dados</td><td>Oracle (script oficial); H2 em modo Oracle para rodar sem credenciais</td><td><code>database/</code></td></tr>
+    <tr><td>API REST</td><td>Java 17, Spring Boot 3.4, Spring Data JPA, Spring Security, JWT, Bean Validation, Swagger (springdoc)</td><td><code>api/</code></td></tr>
+    <tr><td>App mobile</td><td>Kotlin, Jetpack Compose, Retrofit/Moshi, Room (modo demonstração), DataStore</td><td><code>app/</code></td></tr>
+    <tr><td>IoT</td><td>Script Python (biblioteca padrão) + <code>sensores.json</code>, enviando para a API</td><td><code>iot/</code></td></tr>
+    <tr><td>Testes</td><td>JUnit 5 + MockMvc (24 testes automatizados), script de evidências, coleção Postman</td><td><code>api/src/test</code>, <code>docs/</code></td></tr>
+  </table>
+  <div class="box">Fluxo: <b>sensor simulado</b> → <code>POST /api/sensores/leituras</code> (chave do dispositivo) → API grava a leitura no <b>banco</b>, atualiza a ocupação do local e gera/encerra <b>alerta</b> conforme o limite → o <b>app</b> lista os alertas em <code>GET /api/alertas</code>.</div>
+  <h3>Conexão com os ODS</h3>
+  <table>
+    <tr><th>ODS</th><th>Contribuição</th></tr>
+    <tr><td><b>11</b> Cidades e comunidades sustentáveis</td><td>Meta 11.2 e 11.7: transporte e espaços públicos acessíveis; zeladoria colaborativa dos espaços públicos.</td></tr>
+    <tr><td><b>10</b> Redução das desigualdades</td><td>Meta 10.2: inclusão de pessoas com deficiência, que passam a decidir trajetos com informação.</td></tr>
+    <tr><td><b>13</b> Ação contra a mudança do clima</td><td>Meta 13.1: alertas de chuva intensa aumentam a capacidade de adaptação a eventos extremos.</td></tr>
+    <tr><td><b>9</b> Indústria, inovação e infraestrutura</td><td>Sensores IoT e dados abertos para priorizar manutenção de infraestrutura.</td></tr>
+  </table>
+  <p><b>Como medir o impacto:</b> número de barreiras relatadas e resolvidas, tempo médio até “Resolvida”, quantidade de locais com dados de acessibilidade e de alertas entregues (consultas 3, 4 e 6 do banco já calculam esses indicadores).</p>
+</section>
+
+<section>
+  <h2>1. Banco de dados <span class="pts">2 pts</span></h2>
+  <p>Modelo relacional em Oracle com <b>8 entidades</b>, PK, FK, UNIQUE e CHECK, na 3ª forma normal: listas (recursos/obstáculos) ficam em tabela própria, o nível de ocupação é <b>derivado</b> (não armazenado) e o valor do alerta vem da leitura que o disparou.</p>
+  <h3>Diagrama Entidade-Relacionamento</h3>
+  {{DER}}
+  <table>
+    <tr><th>Relacionamento</th><th>Cardinalidade</th><th>Regra</th></tr>
+    <tr><td>USUARIO – OCORRENCIA</td><td>1 : N</td><td>Cada relato tem um autor.</td></tr>
+    <tr><td>LOCAL – OCORRENCIA</td><td>1 : N</td><td>Cada relato é sobre um local existente.</td></tr>
+    <tr><td>USUARIO – PREFERENCIA</td><td>1 : 1</td><td>PK da preferência é a FK do usuário (ON DELETE CASCADE).</td></tr>
+    <tr><td>LOCAL – ITEM_ACESSIBILIDADE</td><td>1 : N</td><td>Recursos e obstáculos (tp_item RECURSO/OBSTACULO).</td></tr>
+    <tr><td>LOCAL – SENSOR</td><td>1 : N</td><td>UNIQUE (tp_sensor, id_local): um sensor de cada tipo por local.</td></tr>
+    <tr><td>SENSOR – LEITURA_SENSOR</td><td>1 : N</td><td>Histórico de leituras, marcadas como simuladas.</td></tr>
+    <tr><td>LEITURA_SENSOR – ALERTA</td><td>1 : 0..1</td><td>UNIQUE (id_leitura): uma leitura dispara no máximo um alerta.</td></tr>
+  </table>
+  <h3>Script <code>database/citizentech.sql</code></h3>
+  <p>Remove as tabelas TB_CT_* (bloco PL/SQL, pode rodar várias vezes), cria as 8 tabelas com <code>GENERATED BY DEFAULT AS IDENTITY</code>, PK, FK, UNIQUE e CHECK (ex.: <code>st_ocorrencia IN ('RECEBIDA','EM_ANALISE','ENCAMINHADA','RESOLVIDA')</code>, <code>LENGTH(ds_descricao) &gt;= 12</code>, <code>vl_leitura &gt;= 0</code>), 3 índices e a carga inicial: 3 usuários (senhas em hash BCrypt), 4 locais, 15 itens, 4 relatos, 5 sensores, 8 leituras e 3 alertas.</p>
+  <h3>Consultas de uso (<code>database/consultas.sql</code>)</h3>
+  <table>
+    <tr><th>#</th><th>Pergunta respondida</th><th>Recursos SQL</th></tr>
+    <tr><td>1</td><td>Tela Explorar: recursos, obstáculos e relatos abertos por local</td><td>LEFT JOIN, COUNT DISTINCT com CASE, GROUP BY</td></tr>
+    <tr><td>2</td><td>Meus relatos (cidadã Ana) com nome do local</td><td>JOIN 3 tabelas, ORDER BY</td></tr>
+    <tr><td>3</td><td>Painel admin: relatos por status e categoria</td><td>GROUP BY, COUNT</td></tr>
+    <tr><td>4</td><td>Estatística de cada sensor (média, máxima, leituras acima do limite)</td><td>JOIN, AVG, MAX, SUM(CASE)</td></tr>
+    <tr><td>5</td><td>Alertas ativos com valor, unidade e local</td><td>JOIN 4 tabelas</td></tr>
+    <tr><td>6</td><td>Cidadãos que mais relatam e quantos foram resolvidos</td><td>GROUP BY, HAVING</td></tr>
+    <tr><td>7</td><td>Sensores com leitura desatualizada (&gt; 30 min)</td><td>Subconsulta com MAX, INTERVAL</td></tr>
+    <tr><td>8</td><td>Usuários e preferências de acessibilidade</td><td>LEFT JOIN 1:1</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>2. API RESTful <span class="pts">4 pts</span></h2>
+  <p>Java 17 + Spring Boot. Base: <code>http://localhost:8080/api</code>. Documentação interativa em <b>Swagger</b> (<code>/swagger-ui.html</code>), também exportada em <code>docs/api/openapi.json</code>, e <b>coleção Postman</b> com 32 requisições e testes de status em <code>docs/api/CitizenTech.postman_collection.json</code>.</p>
+  <h3>Endpoints (20 operações)</h3>
+  <table>
+    <tr><th>Método</th><th>Rota</th><th>Uso</th><th>Acesso</th><th>Respostas</th></tr>
+    <tr><td>POST</td><td>/auth/registrar</td><td>Cria conta de cidadão</td><td>Público</td><td>201, 400, 409</td></tr>
+    <tr><td>POST</td><td>/auth/login</td><td>Login, retorna JWT</td><td>Público</td><td>200, 400, 401, 429</td></tr>
+    <tr><td>GET</td><td>/auth/me</td><td>Usuário logado</td><td>Logado</td><td>200, 401</td></tr>
+    <tr><td>GET</td><td>/locais?status=&amp;busca=</td><td>Lista locais</td><td>Logado</td><td>200, 400, 401</td></tr>
+    <tr><td>GET</td><td>/locais/{id}</td><td>Detalhe do local</td><td>Logado</td><td>200, 404</td></tr>
+    <tr><td>POST</td><td>/locais</td><td>Cadastra local</td><td>ADMIN</td><td>201, 400, 403, 409</td></tr>
+    <tr><td>PUT</td><td>/locais/{id}</td><td>Atualiza local</td><td>ADMIN</td><td>200, 400, 403, 404</td></tr>
+    <tr><td>DELETE</td><td>/locais/{id}</td><td>Exclui local sem vínculos</td><td>ADMIN</td><td>204, 403, 404, 409</td></tr>
+    <tr><td>GET</td><td>/ocorrencias?usuarioId=&amp;status=</td><td>Relatos (cidadão: só os seus)</td><td>Logado</td><td>200, 403</td></tr>
+    <tr><td>GET</td><td>/ocorrencias/{id}</td><td>Detalhe do relato</td><td>Dono ou ADMIN</td><td>200, 400, 403, 404</td></tr>
+    <tr><td>POST</td><td>/ocorrencias</td><td>Registra barreira</td><td>Logado</td><td>201, 400</td></tr>
+    <tr><td>PUT</td><td>/ocorrencias/{id}/status</td><td>Atualiza andamento</td><td>ADMIN</td><td>200, 400, 403, 404, 409</td></tr>
+    <tr><td>DELETE</td><td>/ocorrencias/{id}</td><td>Exclui/cancela relato</td><td>ADMIN ou autor (se Recebida)</td><td>204, 403, 404, 409</td></tr>
+    <tr><td>GET</td><td>/alertas?incluirEncerrados=</td><td>Alertas ativos / histórico</td><td>Logado</td><td>200</td></tr>
+    <tr><td>PUT</td><td>/alertas/{id}/encerrar</td><td>Encerra alerta</td><td>ADMIN</td><td>200, 403, 404, 409</td></tr>
+    <tr><td>GET</td><td>/preferencias/{usuarioId}</td><td>Preferências</td><td>Dono ou ADMIN</td><td>200, 403, 404</td></tr>
+    <tr><td>PUT</td><td>/preferencias/{usuarioId}</td><td>Salva preferências</td><td>Dono ou ADMIN</td><td>200, 400, 403</td></tr>
+    <tr><td>POST</td><td>/sensores/leituras</td><td>Recebe leituras IoT</td><td>Dispositivo ou ADMIN</td><td>201, 400, 401, 403, 404</td></tr>
+    <tr><td>GET</td><td>/sensores</td><td>Painel de sensores</td><td>ADMIN</td><td>200, 403</td></tr>
+    <tr><td>GET</td><td>/sensores/{codigo}/leituras</td><td>Histórico do sensor</td><td>ADMIN</td><td>200, 400, 404</td></tr>
+  </table>
+  <h3>Camadas</h3>
+  <table>
+    <tr><th>Camada</th><th>Pacote</th><th>Responsabilidade</th></tr>
+    <tr><td>Controller</td><td><code>controller</code></td><td>Rotas HTTP, <code>@Valid</code> nos corpos, status de resposta. Nenhuma regra de negócio.</td></tr>
+    <tr><td>Service</td><td><code>service</code></td><td>Regras: dono do relato, fluxo de status, limites dos sensores, geração/encerramento de alertas, transações.</td></tr>
+    <tr><td>Repository</td><td><code>repository</code></td><td>Spring Data JPA com consultas parametrizadas (JPQL).</td></tr>
+    <tr><td>Model / DTO</td><td><code>model</code>, <code>dto</code></td><td>Entidades JPA mapeadas nas tabelas TB_CT_*; DTOs (records) separam o formato da API do banco.</td></tr>
+    <tr><td>Transversais</td><td><code>security</code>, <code>config</code>, <code>exception</code></td><td>JWT, filtro de autenticação, regras de acesso, CORS, Swagger e tratamento global de erros.</td></tr>
+  </table>
+  <h3>Respostas e validação</h3>
+  <p>Erros sempre no formato <code>{"status","message","path","timestamp","erros"}</code>, sem stack trace. Exemplo de validação (400):</p>
+  <pre>{ "status": 400, "message": "Dados inválidos. Verifique os campos informados.", "path": "/api/ocorrencias",
+  "erros": { "categoria": "é obrigatória", "descricao": "não pode conter os caracteres &lt; ou &gt;" } }</pre>
+</section>
+
+<section>
+  <h2>3. Plano de testes <span class="pts">2 pts</span></h2>
+  <p>Objetivo: validar regras de negócio, contrato HTTP, segurança e integração IoT da API. Ambiente: API com H2 em modo Oracle carregado pelo mesmo script do banco. <b>Execução automatizada:</b> <code>mvn test</code> (JUnit 5 + MockMvc), relatório em <code>docs/evidencias/testes-automatizados/</code>. <b>Execução manual/API:</b> <code>docs/evidencias/coletar_evidencias.py</code> e coleção Postman.</p>
+  <table>
+    <tr><th>ID</th><th>Cenário</th><th>Entrada</th><th>Saída esperada</th><th>Status</th></tr>
+    <tr><td>CT-01</td><td>Login válido</td><td>ana@citizentech.com / Cidadao@2026</td><td>200, token JWT, perfil CIDADAO</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-02</td><td>Login com senha errada</td><td>senha "errada123"</td><td>401 "E-mail ou senha inválidos."</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-03</td><td>Cadastro e e-mail duplicado</td><td>carla@teste.com duas vezes</td><td>201 perfil CIDADAO; depois 409</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-04</td><td>Cadastro com senha fraca</td><td>senha "123"</td><td>400 com erro no campo senha</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-05</td><td>Rota protegida sem token</td><td>GET /locais</td><td>401</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-06</td><td>Token adulterado</td><td>JWT com assinatura alterada</td><td>401</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-07</td><td>Listar e filtrar locais</td><td>GET /locais, status=Acessível</td><td>200, 4 locais; filtro só "Acessível"; biblioteca "Alta"</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-08</td><td>Local inexistente</td><td>GET /locais/nao-existe</td><td>404</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-09</td><td>Registrar barreira</td><td>terminal, "Rampa bloqueada", descrição válida</td><td>201, id CT-xxxx, status Recebida, 15%</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-10</td><td>Barreira inválida</td><td>categoria vazia, descrição com &lt;script&gt;, local inexistente</td><td>400 com campos inválidos</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-11</td><td>Isolamento de relatos</td><td>Ana pede usuarioId=3</td><td>403; Ana vê só os seus; admin vê todos</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-12</td><td>Alterar status (perfis)</td><td>PUT status "Encaminhada"</td><td>Cidadão 403; admin 200, progresso 75</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-13</td><td>Status de relato resolvido</td><td>CT-1018 → "Recebida"</td><td>409</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-14</td><td>Cancelar relato</td><td>Ana cancela CT-1024 (Em análise); Bruno cancela CT-1040 (Recebida)</td><td>409; 204 e depois 404</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-15</td><td>Sensor gera e encerra alerta</td><td>ocupação terminal 72 (limite 60); depois 20</td><td>201, alerta criado e visível; ocupação "Alta"; depois alerta encerrado</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-16</td><td>Sensor sem autorização</td><td>sem chave, chave errada, token de cidadão</td><td>401, 401, 403</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-17</td><td>Leitura inválida</td><td>valor -5; sensor "NAO-EXISTE"</td><td>400; 404</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-18</td><td>Preferências</td><td>Ana salva as suas; pede as do usuário 3</td><td>200; 403</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-19</td><td>CRUD de locais por perfil</td><td>cidadão cria; admin cria e exclui; admin exclui local com relatos</td><td>403; 201 e 204; 409</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-20</td><td>Força bruta e cabeçalhos</td><td>5 senhas erradas seguidas</td><td>429 na 6ª tentativa; X-Frame-Options, nosniff e CSP presentes</td><td class="ok">Passou</td></tr>
+    <tr><td>CT-21</td><td>Tentativa de SQL injection</td><td>busca <code>' OR '1'='1</code>; id <code>1 OR 1=1</code></td><td>200 lista vazia; 400 (tratado como texto)</td><td class="ok">Passou</td></tr>
+    <tr><td>U-01..03</td><td>Unidade: status, ids, BCrypt</td><td>"Em análise", "CT-1024", senha</td><td>Conversões corretas; hash diferente a cada senha</td><td class="ok">Passou</td></tr>
+  </table>
+  <h3>Execução e evidências</h3>
+  <p><b>Automatizados:</b> 24 testes executados por <code>mvn test</code>, <b>24 aprovados, 0 falhas</b>:</p>
+  <pre>{{LOG_TESTES}}</pre>
+  <p><b>API em execução</b> (script <code>coletar_evidencias.py</code>; log completo em <code>docs/evidencias/execucao_api.txt</code>):</p>
+  <pre>{{LOG_API}}</pre>
+</section>
+
+<section>
+  <h2>4. Frontend mobile <span class="pts">3 pts</span></h2>
+  <p>App Android nativo (Kotlin + Jetpack Compose) que consome a API do grupo via Retrofit, com o token JWT no cabeçalho <code>Authorization</code>.</p>
+  <table>
+    <tr><th>Tela</th><th>O que faz</th><th>API</th></tr>
+    <tr><td>Login / Cadastro</td><td>Entrar ou criar conta; mostra erro da API; opção de modo demonstração</td><td>POST /auth/login, /auth/registrar</td></tr>
+    <tr><td>Explorar (lista)</td><td>Mapa ilustrativo, busca, filtro de acessibilidade, lista de locais</td><td>GET /locais</td></tr>
+    <tr><td>Detalhe do local</td><td>Recursos, obstáculos, ocupação e hora da última leitura</td><td>GET /locais/{id}</td></tr>
+    <tr><td>Novo relato (cadastro)</td><td>Local, categoria e descrição obrigatórios, com validação</td><td>POST /ocorrencias</td></tr>
+    <tr><td>Relatos</td><td>Cidadão: acompanha e cancela os seus. Admin: vê todos e avança o status</td><td>GET /ocorrencias, PUT /status, DELETE</td></tr>
+    <tr><td>Alertas</td><td>Alertas de chuva/ocupação gerados pelos sensores</td><td>GET /alertas</td></tr>
+    <tr><td>Perfil</td><td>Preferências de trajeto, alto contraste, tamanho do texto, sair</td><td>GET/PUT /preferencias/{id}</td></tr>
+  </table>
+  <p><b>Tratamento de erros de conexão:</b> falha de rede mostra tela “Não foi possível carregar os dados” com “Tentar novamente”; erros de validação aparecem na snackbar com a mensagem da API; token expirado (401) encerra a sessão e volta ao login.</p>
+  <p><b>Usabilidade:</b> layout responsivo (barra inferior no celular, navigation rail em telas largas), alto contraste, escala de texto, status descritos por texto e não só por cor, áreas de toque amplas e feedback de carregamento em todos os botões.</p>
+</section>
+
+<section>
+  <h2>5. Segurança <span class="pts">2 pts</span></h2>
+  <h3>Login seguro</h3>
+  <p>Senhas armazenadas com <b>BCrypt</b> (salt aleatório, custo 10) em <code>ds_senha_hash</code>; nunca em texto puro. O login devolve um <b>JWT HMAC-SHA256</b> com expiração de 2 h; mensagem de erro genérica (não revela se o e-mail existe).</p>
+  <h3>Controle de acesso</h3>
+  <table>
+    <tr><th>Perfil</th><th>Pode</th></tr>
+    <tr><td>CIDADAO</td><td>Consultar locais e alertas; criar relatos; ver/cancelar só os próprios relatos; editar só as próprias preferências.</td></tr>
+    <tr><td>ADMIN</td><td>Tudo do cidadão + CRUD de locais, alterar status/excluir qualquer relato, encerrar alertas, painel de sensores.</td></tr>
+    <tr><td>DEVICE (sensor)</td><td>Somente <code>POST /sensores/leituras</code>, autenticado pelo cabeçalho <code>X-Device-Key</code>.</td></tr>
+  </table>
+  <p>Regras de rota no <code>SecurityConfig</code> (<code>hasRole</code>) + regras de “dono do recurso” nos services. O cadastro público sempre cria CIDADAO (não aceita perfil no corpo, evitando escalada de privilégio).</p>
+  <h3>Boas práticas</h3>
+  <table>
+    <tr><th>Prática</th><th>Implementação</th></tr>
+    <tr><td>Validação de entrada</td><td>Bean Validation em todos os DTOs (tamanho, e-mail, senha forte, slug, faixa de valores) + CHECK no banco.</td></tr>
+    <tr><td>Proteção contra SQL injection</td><td>Somente JPA/JPQL com parâmetros vinculados; nenhuma concatenação de SQL (teste CT-21).</td></tr>
+    <tr><td>Proteção contra XSS</td><td>Textos livres rejeitam <code>&lt;</code> e <code>&gt;</code>; respostas JSON; cabeçalho Content-Security-Policy, X-Content-Type-Options e X-Frame-Options DENY.</td></tr>
+    <tr><td>Criptografia</td><td>Hash BCrypt das senhas e assinatura HMAC-SHA256 dos tokens; comparação da chave do dispositivo em tempo constante.</td></tr>
+    <tr><td>Força bruta</td><td>Bloqueio de 15 min após 5 senhas erradas para o mesmo e-mail (HTTP 429).</td></tr>
+    <tr><td>Segredos e erros</td><td>Segredo JWT, chave IoT e senha do Oracle por variável de ambiente; respostas de erro sem stack trace.</td></tr>
+    <tr><td>CORS e sessão</td><td>CORS só para origens configuradas; API stateless (sem cookie de sessão).</td></tr>
+    <tr><td>Privacidade</td><td>Ocupação é contagem agregada (sem câmera nem identificação); alertas marcados como simulados.</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>6. Simulação de IoT <span class="pts">2 pts</span></h2>
+  <p>O script <code>iot/simulador_sensores.py</code> lê <code>iot/sensores.json</code> e envia leituras em lote para a API a cada N segundos, autenticado como dispositivo. Cenários: <code>normal</code>, <code>tempestade</code>, <code>lotacao</code>, <code>pico</code>.</p>
+  <table>
+    <tr><th>Sensor</th><th>O que mede</th><th>Limite</th><th>Como influencia o sistema</th></tr>
+    <tr><td>OCUP-BIB-01, OCUP-TER-01, OCUP-CUL-01</td><td>Contagem agregada de pessoas no local (sensor de passagem)</td><td>35 / 60 / 40 pessoas</td><td>Atualiza a ocupação e o nível (Baixa/Moderada/Alta) do local no app; acima do limite gera alerta “com alta ocupação”, sugerindo outro horário.</td></tr>
+    <tr><td>CHUVA-CUL-01, CHUVA-TER-01</td><td>Pluviômetro: intensidade de chuva (mm/h)</td><td>30 mm/h</td><td>Acima do limite gera alerta de Clima: calçadas e rampas podem estar escorregadias ou alagadas.</td></tr>
+  </table>
+  <h3>Uso dos dados (regras na API)</h3>
+  <p>1) Toda leitura é gravada em TB_CT_LEITURA_SENSOR. 2) Leitura ≥ limite cria alerta ATIVO (substitui o anterior do mesmo sensor). 3) Leitura abaixo do limite encerra o alerta ativo (situação normalizada). 4) Leituras com mais de 30 min marcam o local como “leitura desatualizada”. 5) Os alertas aparecem na aba Alertas do app.</p>
+  <h3>Evidência de execução (cenário “pico”)</h3>
+  <pre>{{LOG_IOT}}</pre>
+</section>
+
+<section>
+  <h2>7. Como executar</h2>
+  <p>Passo a passo completo no <code>README.md</code>. Resumo:</p>
+  <pre># 1) API (Java 17 + Maven) - sobe com banco H2 em modo Oracle ja carregado
+cd api
+mvn spring-boot:run                     # Swagger: http://localhost:8080/swagger-ui.html
+
+# 1b) Oracle FIAP: rode database/citizentech.sql no SQL Developer e depois
+set ORACLE_USER=rmXXXXX &amp; set ORACLE_PASSWORD=******
+mvn spring-boot:run -Dspring-boot.run.profiles=oracle
+
+# 2) Testes automatizados
+mvn test
+
+# 3) Sensores IoT (outro terminal)
+python iot/simulador_sensores.py --cenario tempestade
+
+# 4) App: abrir a raiz do projeto no Android Studio e rodar no emulador
+#    (a URL padrao http://10.0.2.2:8080/api/ aponta para a API no PC)</pre>
+  <p>Usuários de teste: <code>admin@citizentech.com / Admin@2026</code> (ADMIN) e <code>ana@citizentech.com / Cidadao@2026</code> (CIDADAO).</p>
+
+  <h2 style="margin-top:24px">8. Declaração de uso de IA generativa</h2>
+  <p>Usamos IA generativa (Claude, da Anthropic, e Google AI Studio no protótipo inicial do app) para apoio na estruturação do código, geração de partes do backend, testes e documentação, e para revisão de texto. Todo o material foi revisado, executado e testado pela equipe (resultados reais nas evidências acima), e a equipe é capaz de explicar cada parte.</p>
+</section>
+
+</body>
+</html>

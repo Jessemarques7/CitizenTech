@@ -27,6 +27,9 @@ class UserPreferencesDataStore(private val context: Context) {
         val USE_API_MODE = booleanPreferencesKey("use_api_mode")
         val API_BASE_URL = stringPreferencesKey("api_base_url")
         val BEARER_TOKEN = stringPreferencesKey("bearer_token")
+        val USUARIO_NOME = stringPreferencesKey("usuario_nome")
+        val USUARIO_EMAIL = stringPreferencesKey("usuario_email")
+        val PERFIL = stringPreferencesKey("perfil")
     }
 
     val preferencesFlow: Flow<PreferenciasUsuario> = context.dataStore.data.map { prefs ->
@@ -42,9 +45,12 @@ class UserPreferencesDataStore(private val context: Context) {
 
     val apiConfigFlow: Flow<ConexaoApiConfig> = context.dataStore.data.map { prefs ->
         ConexaoApiConfig(
-            useApiMode = prefs[Keys.USE_API_MODE] ?: false,
+            useApiMode = prefs[Keys.USE_API_MODE] ?: true,
             apiBaseUrl = prefs[Keys.API_BASE_URL] ?: ConexaoApiConfig.DEFAULT_API_BASE_URL,
             bearerToken = prefs[Keys.BEARER_TOKEN] ?: "",
+            usuarioNome = prefs[Keys.USUARIO_NOME] ?: "",
+            usuarioEmail = prefs[Keys.USUARIO_EMAIL] ?: "",
+            perfil = prefs[Keys.PERFIL] ?: "",
         )
     }
 
@@ -64,6 +70,9 @@ class UserPreferencesDataStore(private val context: Context) {
             store[Keys.USE_API_MODE] = config.useApiMode
             store[Keys.API_BASE_URL] = config.apiBaseUrl.trim()
             store[Keys.BEARER_TOKEN] = config.bearerToken.trim()
+            store[Keys.USUARIO_NOME] = config.usuarioNome
+            store[Keys.USUARIO_EMAIL] = config.usuarioEmail
+            store[Keys.PERFIL] = config.perfil
         }
     }
 }

@@ -52,13 +52,26 @@ data class PreferenciasUsuario(
     }
 }
 
+/**
+ * Conexão com a API e sessão do usuário logado. O token JWT vem do login (POST /auth/login);
+ * o perfil (CIDADAO ou ADMIN) define quais ações aparecem no app.
+ */
 data class ConexaoApiConfig(
-    val useApiMode: Boolean = false,
+    val useApiMode: Boolean = true,
     val apiBaseUrl: String = DEFAULT_API_BASE_URL,
     val bearerToken: String = "",
+    val usuarioNome: String = "",
+    val usuarioEmail: String = "",
+    val perfil: String = "",
 ) {
+    val isLoggedIn: Boolean get() = bearerToken.isNotBlank()
+    val isAdmin: Boolean get() = perfil.equals(PERFIL_ADMIN, ignoreCase = true)
+
+    fun semSessao() = copy(bearerToken = "", usuarioNome = "", usuarioEmail = "", perfil = "")
+
     companion object {
         const val DEFAULT_API_BASE_URL = "http://10.0.2.2:8080/api/"
+        const val PERFIL_ADMIN = "ADMIN"
     }
 }
 
@@ -86,6 +99,13 @@ object BarrierCategories {
 
 object ReportStatuses {
     val filters = listOf("Todos", "Recebida", "Em análise", "Encaminhada", "Resolvida")
+    private val fluxo = listOf("Recebida", "Em análise", "Encaminhada", "Resolvida")
+
+    /** Próxima etapa do fluxo (usado pelo admin); null se já estiver resolvida. */
+    fun proximo(status: String): String? {
+        val i = fluxo.indexOfFirst { it.equals(status, ignoreCase = true) }
+        return if (i in 0 until fluxo.lastIndex) fluxo[i + 1] else null
+    }
 }
 
 object AccessibilityFilters {

@@ -1,0 +1,1229 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "CitizenTech API",
+        "description": "API REST da CitizenTech - Acessibilidade Urbana Inteligente (Global Solution FIAP 2026/2).\n\n**Como testar:** chame `POST /api/auth/login` com um usu\u00c3\u00a1rio de demonstra\u00c3\u00a7\u00c3\u00a3o,\ncopie o `token` e clique em **Authorize** (bearerAuth).\n\n- Admin: `admin@citizentech.com` / `Admin@2026`\n- Cidad\u00c3\u00a3: `ana@citizentech.com` / `Cidadao@2026`\n- Sensores IoT: cabe\u00c3\u00a7alho `X-Device-Key` (deviceKey) em `POST /api/sensores/leituras`\n",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8081",
+            "description": "Generated server url"
+        }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "Locais",
+            "description": "Locais p\u00c3\u00bablicos, recursos de acessibilidade e ocupa\u00c3\u00a7\u00c3\u00a3o"
+        },
+        {
+            "name": "Autentica\u00c3\u00a7\u00c3\u00a3o",
+            "description": "Cadastro, login (JWT) e dados do usu\u00c3\u00a1rio logado"
+        },
+        {
+            "name": "Ocorr\u00c3\u00aancias",
+            "description": "Relatos de barreiras feitos pelos cidad\u00c3\u00a3os"
+        },
+        {
+            "name": "Prefer\u00c3\u00aancias",
+            "description": "Prefer\u00c3\u00aancias de acessibilidade do usu\u00c3\u00a1rio"
+        },
+        {
+            "name": "Alertas",
+            "description": "Alertas gerados pelas leituras simuladas dos sensores"
+        },
+        {
+            "name": "Sensores IoT",
+            "description": "Sensores simulados de ocupa\u00c3\u00a7\u00c3\u00a3o e chuva"
+        }
+    ],
+    "paths": {
+        "/api/preferencias/{usuarioId}": {
+            "get": {
+                "tags": [
+                    "Prefer\u00c3\u00aancias"
+                ],
+                "summary": "Consulta prefer\u00c3\u00aancias",
+                "description": "403 se n\u00c3\u00a3o forem as suas (exceto admin).",
+                "operationId": "buscar",
+                "parameters": [
+                    {
+                        "name": "usuarioId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PreferenciasDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Prefer\u00c3\u00aancias"
+                ],
+                "summary": "Salva prefer\u00c3\u00aancias",
+                "description": "403 se n\u00c3\u00a3o forem as suas (exceto admin).",
+                "operationId": "salvar",
+                "parameters": [
+                    {
+                        "name": "usuarioId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PreferenciasDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PreferenciasDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ocorrencias/{id}/status": {
+            "put": {
+                "tags": [
+                    "Ocorr\u00c3\u00aancias"
+                ],
+                "summary": "Atualiza andamento (ADMIN)",
+                "description": "409 se o relato j\u00c3\u00a1 estiver resolvido.",
+                "operationId": "atualizarStatus",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StatusRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OcorrenciaResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/locais/{id}": {
+            "get": {
+                "tags": [
+                    "Locais"
+                ],
+                "summary": "Detalhe do local",
+                "description": "404 se o local n\u00c3\u00a3o existir.",
+                "operationId": "buscar_1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LocalResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Locais"
+                ],
+                "summary": "Atualiza local (ADMIN)",
+                "operationId": "atualizar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LocalRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LocalResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Locais"
+                ],
+                "summary": "Exclui local (ADMIN)",
+                "description": "204; 409 se houver relatos ou sensores vinculados.",
+                "operationId": "excluir",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/api/alertas/{id}/encerrar": {
+            "put": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Encerra alerta manualmente (ADMIN)",
+                "description": "Aceita 'AL-205' ou '205'.",
+                "operationId": "encerrar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AlertaResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sensores/leituras": {
+            "post": {
+                "tags": [
+                    "Sensores IoT"
+                ],
+                "summary": "Registra leituras (dispositivo ou ADMIN)",
+                "description": "Aceita um array. Leitura >= limite do sensor gera alerta; abaixo do limite encerra o alerta ativo.",
+                "operationId": "registrar",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/LeituraRequest"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LeiturasResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "deviceKey": []
+                    }
+                ]
+            }
+        },
+        "/api/ocorrencias": {
+            "get": {
+                "tags": [
+                    "Ocorr\u00c3\u00aancias"
+                ],
+                "summary": "Lista relatos",
+                "description": "Cidad\u00c3\u00a3o: s\u00c3\u00b3 os pr\u00c3\u00b3prios (403 se pedir de outro usuarioId). Admin: todos.",
+                "operationId": "listar",
+                "parameters": [
+                    {
+                        "name": "usuarioId",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OcorrenciaResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Ocorr\u00c3\u00aancias"
+                ],
+                "summary": "Registra barreira",
+                "description": "201 com status inicial 'Recebida'; 400 se local/categoria/descri\u00c3\u00a7\u00c3\u00a3o inv\u00c3\u00a1lidos.",
+                "operationId": "criar",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OcorrenciaRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OcorrenciaResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/locais": {
+            "get": {
+                "tags": [
+                    "Locais"
+                ],
+                "summary": "Lista locais",
+                "description": "Filtros opcionais: status (Acess\u00c3\u00advel, Parcial, Inacess\u00c3\u00advel) e busca por nome/endere\u00c3\u00a7o.",
+                "operationId": "listar_1",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "busca",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/LocalResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Locais"
+                ],
+                "summary": "Cadastra local (ADMIN)",
+                "description": "201 criado; 400 inv\u00c3\u00a1lido; 403 sem perfil ADMIN; 409 id duplicado.",
+                "operationId": "criar_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LocalRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LocalResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/registrar": {
+            "post": {
+                "tags": [
+                    "Autentica\u00c3\u00a7\u00c3\u00a3o"
+                ],
+                "summary": "Cria conta de cidad\u00c3\u00a3o",
+                "description": "201 com token; 400 dados inv\u00c3\u00a1lidos; 409 e-mail j\u00c3\u00a1 usado.",
+                "operationId": "registrar_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegistroRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Autentica\u00c3\u00a7\u00c3\u00a3o"
+                ],
+                "summary": "Login",
+                "description": "200 com token JWT; 401 credenciais inv\u00c3\u00a1lidas; 429 ap\u00c3\u00b3s 5 falhas seguidas.",
+                "operationId": "login",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/api/sensores": {
+            "get": {
+                "tags": [
+                    "Sensores IoT"
+                ],
+                "summary": "Painel de sensores (ADMIN)",
+                "description": "\u00c3\u0161ltima leitura de cada sensor e se est\u00c3\u00a1 desatualizada.",
+                "operationId": "listar_2",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SensorResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sensores/{codigo}/leituras": {
+            "get": {
+                "tags": [
+                    "Sensores IoT"
+                ],
+                "summary": "Hist\u00c3\u00b3rico de leituras de um sensor (ADMIN)",
+                "operationId": "leituras",
+                "parameters": [
+                    {
+                        "name": "codigo",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "limite",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/LeituraResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ocorrencias/{id}": {
+            "get": {
+                "tags": [
+                    "Ocorr\u00c3\u00aancias"
+                ],
+                "summary": "Detalhe do relato",
+                "description": "Aceita 'CT-1024' ou '1024'.",
+                "operationId": "buscar_2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OcorrenciaResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Ocorr\u00c3\u00aancias"
+                ],
+                "summary": "Exclui/cancela relato",
+                "description": "Admin: qualquer um. Autor: s\u00c3\u00b3 enquanto 'Recebida' (sen\u00c3\u00a3o 409).",
+                "operationId": "excluir_1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Autentica\u00c3\u00a7\u00c3\u00a3o"
+                ],
+                "summary": "Dados do usu\u00c3\u00a1rio logado",
+                "operationId": "me",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UsuarioResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/alertas": {
+            "get": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Lista alertas",
+                "description": "Ativos por padr\u00c3\u00a3o; incluirEncerrados=true traz o hist\u00c3\u00b3rico.",
+                "operationId": "listar_3",
+                "parameters": [
+                    {
+                        "name": "incluirEncerrados",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AlertaResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "PreferenciasDto": {
+                "type": "object",
+                "properties": {
+                    "evitarEscadas": {
+                        "type": "boolean"
+                    },
+                    "priorizarRampas": {
+                        "type": "boolean"
+                    },
+                    "alertasVisuais": {
+                        "type": "boolean"
+                    },
+                    "altoContraste": {
+                        "type": "boolean"
+                    },
+                    "usuarioId": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "alertasVisuais",
+                    "altoContraste",
+                    "evitarEscadas",
+                    "priorizarRampas"
+                ]
+            },
+            "StatusRequest": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                }
+            },
+            "OcorrenciaResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "localId": {
+                        "type": "string"
+                    },
+                    "localNome": {
+                        "type": "string"
+                    },
+                    "categoria": {
+                        "type": "string"
+                    },
+                    "descricao": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "criadoEm": {
+                        "type": "string"
+                    },
+                    "progresso": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "usuarioId": {
+                        "type": "string"
+                    },
+                    "usuarioNome": {
+                        "type": "string"
+                    },
+                    "dataCriacao": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "dataAtualizacao": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "LocalRequest": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "maxLength": 40,
+                        "minLength": 0,
+                        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                    },
+                    "nome": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "pattern": "^[^<>]*$"
+                    },
+                    "categoria": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "minLength": 0,
+                        "pattern": "^[^<>]*$"
+                    },
+                    "endereco": {
+                        "type": "string",
+                        "maxLength": 150,
+                        "minLength": 0,
+                        "pattern": "^[^<>]*$"
+                    },
+                    "statusAcessibilidade": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "resumo": {
+                        "type": "string",
+                        "maxLength": 400,
+                        "minLength": 0,
+                        "pattern": "^[^<>]*$"
+                    },
+                    "confianca": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "minLength": 0,
+                        "pattern": "^[^<>]*$"
+                    },
+                    "recursos": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 150,
+                            "minLength": 0,
+                            "pattern": "^[^<>]*$"
+                        },
+                        "maxItems": 20,
+                        "minItems": 0
+                    },
+                    "obstaculos": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 150,
+                            "minLength": 0,
+                            "pattern": "^[^<>]*$"
+                        },
+                        "maxItems": 20,
+                        "minItems": 0
+                    }
+                },
+                "required": [
+                    "obstaculos",
+                    "recursos"
+                ]
+            },
+            "LocalResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "nome": {
+                        "type": "string"
+                    },
+                    "categoria": {
+                        "type": "string"
+                    },
+                    "endereco": {
+                        "type": "string"
+                    },
+                    "statusAcessibilidade": {
+                        "type": "string"
+                    },
+                    "resumo": {
+                        "type": "string"
+                    },
+                    "recursos": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "obstaculos": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "ocupacao": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "nivelOcupacao": {
+                        "type": "string"
+                    },
+                    "ultimaLeitura": {
+                        "type": "string"
+                    },
+                    "atualizadoEm": {
+                        "type": "string"
+                    },
+                    "leituraDesatualizada": {
+                        "type": "boolean"
+                    },
+                    "confianca": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AlertaResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "tipo": {
+                        "type": "string"
+                    },
+                    "titulo": {
+                        "type": "string"
+                    },
+                    "local": {
+                        "type": "string"
+                    },
+                    "localId": {
+                        "type": "string"
+                    },
+                    "valor": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "unidade": {
+                        "type": "string"
+                    },
+                    "atualizadoEm": {
+                        "type": "string"
+                    },
+                    "descricao": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "sensor": {
+                        "type": "string"
+                    },
+                    "simulado": {
+                        "type": "boolean"
+                    },
+                    "dataCriacao": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "LeituraRequest": {
+                "type": "object",
+                "properties": {
+                    "sensorCodigo": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "minLength": 0
+                    },
+                    "tipo": {
+                        "type": "string"
+                    },
+                    "localId": {
+                        "type": "string"
+                    },
+                    "localNome": {
+                        "type": "string"
+                    },
+                    "valor": {
+                        "type": "number",
+                        "maximum": 100000
+                    },
+                    "unidade": {
+                        "type": "string"
+                    },
+                    "lidoEm": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "valor"
+                ]
+            },
+            "LeiturasResponse": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "leituras": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "alertasGerados": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "alertasEncerrados": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "resultados": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ResultadoLeitura"
+                        }
+                    }
+                }
+            },
+            "ResultadoLeitura": {
+                "type": "object",
+                "properties": {
+                    "sensor": {
+                        "type": "string"
+                    },
+                    "tipo": {
+                        "type": "string"
+                    },
+                    "localId": {
+                        "type": "string"
+                    },
+                    "valor": {
+                        "type": "number"
+                    },
+                    "limite": {
+                        "type": "number"
+                    },
+                    "acimaDoLimite": {
+                        "type": "boolean"
+                    },
+                    "alertaGerado": {
+                        "type": "string"
+                    },
+                    "alertasEncerrados": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "OcorrenciaRequest": {
+                "type": "object",
+                "properties": {
+                    "usuarioId": {
+                        "type": "string"
+                    },
+                    "localId": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "categoria": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "descricao": {
+                        "type": "string",
+                        "maxLength": 500,
+                        "minLength": 12,
+                        "pattern": "^[^<>]*$"
+                    }
+                }
+            },
+            "RegistroRequest": {
+                "type": "object",
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 3,
+                        "pattern": "^[^<>]*$"
+                    },
+                    "email": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "minLength": 0
+                    },
+                    "senha": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^(?=.*[A-Za-z])(?=.*\\d).{8,72}$"
+                    }
+                }
+            },
+            "TokenResponse": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string"
+                    },
+                    "tipo": {
+                        "type": "string"
+                    },
+                    "expiraEm": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "usuario": {
+                        "$ref": "#/components/schemas/UsuarioResponse"
+                    }
+                }
+            },
+            "UsuarioResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "nome": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "perfil": {
+                        "type": "string"
+                    }
+                }
+            },
+            "LoginRequest": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "senha": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                }
+            },
+            "SensorResponse": {
+                "type": "object",
+                "properties": {
+                    "codigo": {
+                        "type": "string"
+                    },
+                    "tipo": {
+                        "type": "string"
+                    },
+                    "localId": {
+                        "type": "string"
+                    },
+                    "localNome": {
+                        "type": "string"
+                    },
+                    "unidade": {
+                        "type": "string"
+                    },
+                    "limiteAlerta": {
+                        "type": "number"
+                    },
+                    "ativo": {
+                        "type": "boolean"
+                    },
+                    "ultimoValor": {
+                        "type": "number"
+                    },
+                    "ultimaLeitura": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "leituraDesatualizada": {
+                        "type": "boolean"
+                    },
+                    "simulado": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "LeituraResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "valor": {
+                        "type": "number"
+                    },
+                    "lidoEm": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "simulada": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            },
+            "deviceKey": {
+                "type": "apiKey",
+                "name": "X-Device-Key",
+                "in": "header"
+            }
+        }
+    }
+}

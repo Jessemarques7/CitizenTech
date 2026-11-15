@@ -104,7 +104,7 @@ fun ExploreScreen(
                         EyebrowText(text = "CIDADE DEMONSTRATIVA")
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "Olá, Alex.",
+                            text = "Olá, ${uiState.apiConfig.usuarioNome.substringBefore(' ').ifBlank { "Alex" }}.",
                             style = MaterialTheme.typography.headlineMedium,
                             color = colors.navy,
                         )

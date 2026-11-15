@@ -24,6 +24,15 @@ class CitizenTechUiRobolectricTest {
 
     @Test
     fun `explore screen loads places and navigates to detail and tabs`() {
+        // Sem sessão o app abre no login; o teste segue pelo modo demonstração (sem API).
+        composeRule.waitUntil(timeoutMillis = 10_000) {
+            composeRule.onAllNodes(hasTestTag("login_demo_button")).fetchSemanticsNodes().isNotEmpty() ||
+                composeRule.onAllNodesWithText("Olá, Alex.").fetchSemanticsNodes().isNotEmpty()
+        }
+        if (composeRule.onAllNodes(hasTestTag("login_demo_button")).fetchSemanticsNodes().isNotEmpty()) {
+            composeRule.onNodeWithTag("login_demo_button").performClick()
+        }
+
         composeRule.waitUntil(timeoutMillis = 10_000) {
             composeRule.onAllNodesWithText("Olá, Alex.").fetchSemanticsNodes().isNotEmpty()
         }
