@@ -6,7 +6,15 @@ Pessoas com deficiência ou mobilidade reduzida consultam a acessibilidade e a o
 
 - **Vídeo pitch:** [LINK PÚBLICO DO VÍDEO]
 - **PDF dos entregáveis** (DER, plano de testes, evidências, segurança, IoT): [`docs/CitizenTech_Entregaveis.pdf`](docs/CitizenTech_Entregaveis.pdf)
-- **Integrantes:** ver [`integrantes.txt`](integrantes.txt)
+- **Integrantes:**
+
+| Nome | RM |
+|---|---|
+| Ingryd Shirlley da Silva Ribeiro | 558773 |
+| Jesse Marques Mateus | 559139 |
+| Lucas Scardone Avila | 97724 |
+| Murillo Ribeiro de Jesus | 556126 |
+| Thiago dos Santos Cordeiro | 555237 |
 
 ## Estrutura
 
