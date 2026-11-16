@@ -11,6 +11,12 @@ import retrofit2.http.Query
 
 interface CitizenTechApiService {
 
+    @POST("auth/login")
+    suspend fun login(@Body request: LoginRequest): TokenResponseDto
+
+    @POST("auth/registrar")
+    suspend fun registrar(@Body request: RegistroRequest): TokenResponseDto
+
     @GET("locais")
     suspend fun getLocais(): List<LocalDto>
 
@@ -18,7 +24,7 @@ interface CitizenTechApiService {
     suspend fun getLocal(@Path("id") id: String): LocalDto
 
     @GET("ocorrencias")
-    suspend fun getOcorrencias(@Query("usuarioId") usuarioId: String): List<OcorrenciaDto>
+    suspend fun getOcorrencias(@Query("usuarioId") usuarioId: String?): List<OcorrenciaDto>
 
     @POST("ocorrencias")
     suspend fun criarOcorrencia(@Body request: CriarOcorrenciaRequest): OcorrenciaDto

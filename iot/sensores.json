@@ -1,0 +1,41 @@
+{
+  "descricao": "Sensores simulados da CitizenTech. Os codigos e limites precisam existir na tabela TB_CT_SENSOR.",
+  "sensores": [
+    {
+      "codigo": "OCUP-BIB-01",
+      "tipo": "ocupacao",
+      "localId": "biblioteca",
+      "unidade": "pessoas",
+      "o_que_mede": "Contagem agregada de pessoas na Biblioteca Central (sensor de passagem na porta, sem camera e sem identificar ninguem).",
+      "base": 22, "variacao": 6, "minimo": 0, "maximo": 80,
+      "pico": 48
+    },
+    {
+      "codigo": "OCUP-TER-01",
+      "tipo": "ocupacao",
+      "localId": "terminal",
+      "unidade": "pessoas",
+      "o_que_mede": "Contagem agregada de pessoas no Terminal Central.",
+      "base": 30, "variacao": 8, "minimo": 0, "maximo": 150,
+      "pico": 78
+    },
+    {
+      "codigo": "CHUVA-CUL-01",
+      "tipo": "chuva",
+      "localId": "centro-cultural",
+      "unidade": "mm/h",
+      "o_que_mede": "Pluviometro (intensidade de chuva) no entorno do Centro Cultural / Praca das Artes.",
+      "base": 4, "variacao": 3, "minimo": 0, "maximo": 120,
+      "pico": 38
+    },
+    {
+      "codigo": "CHUVA-TER-01",
+      "tipo": "chuva",
+      "localId": "terminal",
+      "unidade": "mm/h",
+      "o_que_mede": "Pluviometro no entorno do Terminal Central.",
+      "base": 2, "variacao": 2, "minimo": 0, "maximo": 120,
+      "pico": 33
+    }
+  ]
+}

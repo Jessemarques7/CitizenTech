@@ -39,6 +39,9 @@ interface CitizenTechDao {
     @Query("DELETE FROM ocorrencias WHERE id = :id")
     suspend fun deleteOcorrenciaById(id: String)
 
+    @Query("SELECT * FROM ocorrencias WHERE id = :id LIMIT 1")
+    suspend fun getOcorrenciaById(id: String): OcorrenciaEntity?
+
     @Query("DELETE FROM ocorrencias")
     suspend fun clearOcorrencias()
 

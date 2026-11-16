@@ -143,6 +143,35 @@ data class LeiturasResponseDto(
 )
 
 @JsonClass(generateAdapter = true)
+data class LoginRequest(
+    val email: String,
+    val senha: String,
+)
+
+@JsonClass(generateAdapter = true)
+data class RegistroRequest(
+    val nome: String,
+    val email: String,
+    val senha: String,
+)
+
+@JsonClass(generateAdapter = true)
+data class UsuarioDto(
+    val id: String,
+    val nome: String,
+    val email: String,
+    val perfil: String,
+)
+
+@JsonClass(generateAdapter = true)
+data class TokenResponseDto(
+    val token: String,
+    val tipo: String = "Bearer",
+    val expiraEm: String? = null,
+    val usuario: UsuarioDto,
+)
+
+@JsonClass(generateAdapter = true)
 data class ApiErrorDto(
     val message: String? = null,
     val detail: String? = null,

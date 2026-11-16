@@ -5,10 +5,15 @@ import com.example.data.local.CitizenTechDao
 import com.example.data.local.DemoSeedData
 import com.example.data.local.OcorrenciaEntity
 import com.example.data.local.UserPreferencesDataStore
+import com.example.data.remote.AtualizarStatusRequest
+import com.example.data.remote.CitizenTechApiService
 import com.example.data.remote.CriarOcorrenciaRequest
 import com.example.data.remote.LeituraSensorRequest
+import com.example.data.remote.LoginRequest
 import com.example.data.remote.NetworkClientFactory
 import com.example.data.remote.PreferenciasDto
+import com.example.data.remote.RegistroRequest
+import com.example.data.remote.TokenResponseDto
 import com.example.domain.model.Alerta
 import com.example.domain.model.ConexaoApiConfig
 import com.example.domain.model.LeituraSensorPayload
@@ -58,6 +63,11 @@ interface CitizenTechRepository {
         leituras: List<LeituraSensorPayload>,
         config: ConexaoApiConfig,
     )
+
+    suspend fun login(baseUrl: String, email: String, senha: String): ConexaoApiConfig
+    suspend fun registrar(baseUrl: String, nome: String, email: String, senha: String): ConexaoApiConfig
+    suspend fun logout()
+    suspend fun atualizarStatus(id: String, status: String, config: ConexaoApiConfig): Ocorrencia
 }
 
 class DefaultCitizenTechRepository(
@@ -109,7 +119,9 @@ class DefaultCitizenTechRepository(
         return try {
             val api = NetworkClientFactory.createApiService(config.apiBaseUrl, config.bearerToken)
             val locais = api.getLocais().map { it.toDomain() }
-            val ocorrencias = api.getOcorrencias(localPrefs.usuarioId).map { it.toDomain() }
+            // Admin acompanha todos os relatos; cidadão só os próprios (a API também garante isso).
+            val ocorrencias = api.getOcorrencias(if (config.isAdmin) null else localPrefs.usuarioId)
+                .map { it.toDomain() }
             val alertas = api.getAlertas().map { it.toDomain() }
             val remotePrefs = runCatching {
                 api.getPreferencias(localPrefs.usuarioId)
@@ -122,7 +134,7 @@ class DefaultCitizenTechRepository(
                 preferencias = remotePrefs,
             )
         } catch (e: Throwable) {
-            throw IllegalStateException(NetworkClientFactory.parseFriendlyError(e), e)
+            throw NetworkClientFactory.toAppError(e)
         }
     }
 
@@ -136,7 +148,7 @@ class DefaultCitizenTechRepository(
             val api = NetworkClientFactory.createApiService(config.apiBaseUrl, config.bearerToken)
             api.getLocal(id).toDomain()
         } catch (e: Throwable) {
-            throw IllegalStateException(NetworkClientFactory.parseFriendlyError(e), e)
+            throw NetworkClientFactory.toAppError(e)
         }
     }
 
@@ -181,7 +193,7 @@ class DefaultCitizenTechRepository(
             )
             created.toDomain().copy(fotoUriLocal = fotoUriLocal)
         } catch (e: Throwable) {
-            throw IllegalStateException(NetworkClientFactory.parseFriendlyError(e), e)
+            throw NetworkClientFactory.toAppError(e)
         }
     }
 
@@ -197,7 +209,7 @@ class DefaultCitizenTechRepository(
                 throw IllegalStateException("A API respondeu com status ${response.code()} ao remover ocorrência.")
             }
         } catch (e: Throwable) {
-            throw IllegalStateException(NetworkClientFactory.parseFriendlyError(e), e)
+            throw NetworkClientFactory.toAppError(e)
         }
     }
 
@@ -222,7 +234,7 @@ class DefaultCitizenTechRepository(
             )
             updated.toDomain(prefs.fontScale, prefs.usuarioId)
         } catch (e: Throwable) {
-            throw IllegalStateException(NetworkClientFactory.parseFriendlyError(e), e)
+            throw NetworkClientFactory.toAppError(e)
         }
     }
 
@@ -283,7 +295,62 @@ class DefaultCitizenTechRepository(
             val api = NetworkClientFactory.createApiService(config.apiBaseUrl, config.bearerToken)
             api.registrarLeituras(leituras.map { LeituraSensorRequest.fromDomain(it) })
         } catch (e: Throwable) {
+            throw NetworkClientFactory.toAppError(e)
+        }
+    }
+
+    override suspend fun login(baseUrl: String, email: String, senha: String): ConexaoApiConfig =
+        autenticar(baseUrl) { api -> api.login(LoginRequest(email.trim(), senha)) }
+
+    override suspend fun registrar(baseUrl: String, nome: String, email: String, senha: String): ConexaoApiConfig =
+        autenticar(baseUrl) { api -> api.registrar(RegistroRequest(nome.trim(), email.trim(), senha)) }
+
+    /** Chama login/cadastro sem token, guarda o JWT e os dados do usuário na sessão. */
+    private suspend fun autenticar(
+        baseUrl: String,
+        chamada: suspend (CitizenTechApiService) -> TokenResponseDto,
+    ): ConexaoApiConfig {
+        val resposta = try {
+            chamada(NetworkClientFactory.createApiService(baseUrl, bearerToken = ""))
+        } catch (e: Throwable) {
+            // Aqui 401 significa senha errada, não sessão expirada: mostra a mensagem da API.
             throw IllegalStateException(NetworkClientFactory.parseFriendlyError(e), e)
+        }
+        val config = ConexaoApiConfig(
+            useApiMode = true,
+            apiBaseUrl = NetworkClientFactory.normalizeBaseUrl(baseUrl),
+            bearerToken = resposta.token,
+            usuarioNome = resposta.usuario.nome,
+            usuarioEmail = resposta.usuario.email,
+            perfil = resposta.usuario.perfil,
+        )
+        prefsStore.saveApiConfig(config)
+        prefsStore.savePreferences(prefsStore.preferencesFlow.first().copy(usuarioId = resposta.usuario.id))
+        return config
+    }
+
+    override suspend fun logout() {
+        prefsStore.saveApiConfig(prefsStore.apiConfigFlow.first().semSessao())
+    }
+
+    override suspend fun atualizarStatus(id: String, status: String, config: ConexaoApiConfig): Ocorrencia {
+        if (!config.useApiMode) {
+            val atual = dao.getOcorrenciaById(id) ?: throw NoSuchElementException("Relato não encontrado.")
+            val progresso = when (status) {
+                "Em análise" -> 45
+                "Encaminhada" -> 75
+                "Resolvida" -> 100
+                else -> 15
+            }
+            val atualizada = atual.copy(status = status, progresso = progresso)
+            dao.insertOcorrencia(atualizada)
+            return atualizada.toDomain()
+        }
+        return try {
+            val api = NetworkClientFactory.createApiService(config.apiBaseUrl, config.bearerToken)
+            api.atualizarStatus(id, AtualizarStatusRequest(status)).toDomain()
+        } catch (e: Throwable) {
+            throw NetworkClientFactory.toAppError(e)
         }
     }
 

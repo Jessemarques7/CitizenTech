@@ -26,6 +26,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -56,6 +57,7 @@ import com.example.ui.components.CitizenTechTopBar
 import com.example.ui.components.Routes
 import com.example.ui.screens.AlertsScreen
 import com.example.ui.screens.ExploreScreen
+import com.example.ui.screens.LoginScreen
 import com.example.ui.screens.NewReportScreen
 import com.example.ui.screens.PlaceDetailScreen
 import com.example.ui.screens.ProfileScreen
@@ -83,10 +85,26 @@ class MainActivity : ComponentActivity() {
                 highContrast = uiState.preferencias.altoContraste,
                 userFontScale = uiState.preferencias.fontScale,
             ) {
-                CitizenTechAppShell(
-                    uiState = uiState,
-                    viewModel = viewModel,
-                )
+                if (uiState.precisaLogin) {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = LocalCitizenTechColors.current.paper,
+                    ) {
+                        LoginScreen(
+                            apiBaseUrl = uiState.apiConfig.apiBaseUrl,
+                            isLoading = uiState.isAuthenticating,
+                            errorMessage = uiState.authError,
+                            onLogin = viewModel::login,
+                            onRegister = viewModel::registrar,
+                            onDemoMode = viewModel::entrarModoDemonstracao,
+                        )
+                    }
+                } else {
+                    CitizenTechAppShell(
+                        uiState = uiState,
+                        viewModel = viewModel,
+                    )
+                }
             }
         }
     }
@@ -279,6 +297,8 @@ fun CitizenTechAppShell(
                                             navController.navigate(Routes.novoRelato())
                                         },
                                         onDeleteReport = viewModel::deleteReport,
+                                        isAdmin = uiState.apiConfig.useApiMode && uiState.apiConfig.isAdmin,
+                                        onAdvanceStatus = viewModel::avancarStatus,
                                     )
                                 }
 
@@ -302,6 +322,7 @@ fun CitizenTechAppShell(
                                         onSavePreferences = viewModel::savePreferences,
                                         onUpdateApiConnection = viewModel::updateApiConnection,
                                         onResetDemoData = viewModel::resetDemoData,
+                                        onLogout = viewModel::logout,
                                     )
                                 }
                             }

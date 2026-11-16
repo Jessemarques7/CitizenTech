@@ -63,6 +63,7 @@ fun ProfileScreen(
     onUpdateApiConnection: (useApiMode: Boolean, baseUrl: String, bearerToken: String) -> Unit,
     onResetDemoData: () -> Unit,
     modifier: Modifier = Modifier,
+    onLogout: () -> Unit = {},
 ) {
     val colors = LocalCitizenTechColors.current
     val prefs = uiState.preferencias
@@ -126,27 +127,38 @@ fun ProfileScreen(
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
-                                text = "A",
+                                text = apiCfg.usuarioNome.firstOrNull()?.uppercase() ?: "A",
                                 fontSize = 21.sp,
                                 fontWeight = FontWeight.Black,
                                 color = colors.tealDark,
                             )
                         }
-                        Column {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Alex Silva",
+                                text = apiCfg.usuarioNome.ifBlank { "Alex Silva" },
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.White,
                             )
                             Text(
-                                text = if (apiCfg.useApiMode) {
-                                    "Perfil cidadão · conectado à API"
-                                } else {
-                                    "Perfil cidadão · demonstração"
+                                text = when {
+                                    !apiCfg.useApiMode -> "Perfil cidadão · demonstração"
+                                    apiCfg.isAdmin -> "Perfil administrador · ${apiCfg.usuarioEmail}"
+                                    else -> "Perfil cidadão · ${apiCfg.usuarioEmail}"
                                 },
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color(0xFFBDD0CE),
                             )
+                        }
+                        if (apiCfg.useApiMode && apiCfg.isLoggedIn) {
+                            OutlinedButton(
+                                onClick = onLogout,
+                                shape = RoundedCornerShape(10.dp),
+                                border = BorderStroke(1.dp, Color(0xFFBDD0CE)),
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                                modifier = Modifier.testTag("profile_logout_button"),
+                            ) {
+                                Text("Sair", color = Color.White, fontWeight = FontWeight.Bold)
+                            }
                         }
                     }
                 }

@@ -3,6 +3,7 @@ package com.example.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.data.remote.SessaoExpiradaException
 import com.example.data.repository.CitizenTechRepository
 import com.example.domain.model.ConexaoApiConfig
 import com.example.domain.model.LeituraSensorPayload
@@ -86,6 +87,8 @@ class CitizenTechViewModel(
     fun refreshAll(showInitialBanner: Boolean = false) {
         viewModelScope.launch {
             val config = repository.apiConfigFlow.first()
+            // Sem login não há o que buscar na API: a tela de login é exibida.
+            if (config.useApiMode && !config.isLoggedIn) return@launch
             _uiState.update {
                 if (it.locais.isEmpty()) it.copy(loadState = DataLoadState.Loading) else it
             }
@@ -110,6 +113,8 @@ class CitizenTechViewModel(
                         },
                     )
                 }
+            } catch (e: SessaoExpiradaException) {
+                encerrarSessao(e.message)
             } catch (e: Throwable) {
                 _uiState.update { state ->
                     state.copy(
@@ -344,13 +349,103 @@ class CitizenTechViewModel(
 
     fun updateApiConnection(useApiMode: Boolean, baseUrl: String, bearerToken: String) {
         viewModelScope.launch {
-            val newConfig = ConexaoApiConfig(
+            // Mantém nome/perfil da sessão; trocar o token manualmente invalida a sessão anterior.
+            val atual = repository.apiConfigFlow.first()
+            val base = if (bearerToken.trim() == atual.bearerToken) atual else atual.semSessao()
+            val newConfig = base.copy(
                 useApiMode = useApiMode,
                 apiBaseUrl = baseUrl.trim().ifEmpty { ConexaoApiConfig.DEFAULT_API_BASE_URL },
                 bearerToken = bearerToken.trim(),
             )
             repository.saveApiConfig(newConfig)
             refreshAll(showInitialBanner = true)
+        }
+    }
+
+    fun login(baseUrl: String, email: String, senha: String) {
+        if (email.isBlank() || senha.isBlank()) {
+            _uiState.update { it.copy(authError = "Informe e-mail e senha.") }
+            return
+        }
+        autenticar { repository.login(baseUrl, email, senha) }
+    }
+
+    fun registrar(baseUrl: String, nome: String, email: String, senha: String) {
+        val erro = when {
+            nome.trim().length < 3 -> "Informe seu nome (mínimo 3 letras)."
+            !email.contains("@") -> "Informe um e-mail válido."
+            senha.length < 8 || senha.none { it.isDigit() } || senha.none { it.isLetter() } ->
+                "A senha precisa de 8+ caracteres, com letras e números."
+            else -> null
+        }
+        if (erro != null) {
+            _uiState.update { it.copy(authError = erro) }
+            return
+        }
+        autenticar { repository.registrar(baseUrl, nome, email, senha) }
+    }
+
+    private fun autenticar(chamada: suspend () -> ConexaoApiConfig) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isAuthenticating = true, authError = null) }
+            try {
+                val config = chamada()
+                _uiState.update {
+                    it.copy(
+                        isAuthenticating = false,
+                        apiConfig = config,
+                        snackbarMessage = "Olá, ${config.usuarioNome.substringBefore(' ')}!",
+                    )
+                }
+                refreshAll()
+            } catch (e: Throwable) {
+                _uiState.update {
+                    it.copy(isAuthenticating = false, authError = e.message ?: "Não foi possível entrar.")
+                }
+            }
+        }
+    }
+
+    fun logout() = encerrarSessao("Você saiu da sua conta.")
+
+    private fun encerrarSessao(mensagem: String?) {
+        viewModelScope.launch {
+            repository.logout()
+            _uiState.update {
+                it.copy(
+                    apiConfig = it.apiConfig.semSessao(),
+                    locais = emptyList(),
+                    ocorrencias = emptyList(),
+                    alertas = emptyList(),
+                    authError = mensagem,
+                )
+            }
+        }
+    }
+
+    fun entrarModoDemonstracao() {
+        updateApiConnection(
+            useApiMode = false,
+            baseUrl = _uiState.value.apiConfig.apiBaseUrl,
+            bearerToken = "",
+        )
+    }
+
+    /** Ação de administrador: avança o relato para a próxima etapa do fluxo. */
+    fun avancarStatus(id: String, novoStatus: String) {
+        viewModelScope.launch {
+            try {
+                val config = _uiState.value.apiConfig
+                val atualizada = repository.atualizarStatus(id, novoStatus, config)
+                _uiState.update { state ->
+                    state.copy(ocorrencias = state.ocorrencias.map { if (it.id == id) atualizada else it })
+                }
+                showSnackbar("Relato $id: ${atualizada.status}.")
+            } catch (e: SessaoExpiradaException) {
+                encerrarSessao(e.message)
+            } catch (e: Throwable) {
+                showSnackbar(e.message ?: "Erro ao atualizar o status.")
+            }
         }
     }
 

@@ -10,6 +10,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
+class SessaoExpiradaException : IllegalStateException("Sua sessão expirou. Faça login novamente.")
+
 object NetworkClientFactory {
 
     val moshi: Moshi by lazy {
@@ -51,6 +53,14 @@ object NetworkClientFactory {
         if (trimmed.isEmpty()) return "http://10.0.2.2:8080/api/"
         return if (trimmed.endsWith("/")) trimmed else "$trimmed/"
     }
+
+    /** Converte falhas HTTP em exceções do app; 401 vira [SessaoExpiradaException] para forçar novo login. */
+    fun toAppError(error: Throwable): Throwable =
+        if (error is HttpException && error.code() == 401) {
+            SessaoExpiradaException()
+        } else {
+            IllegalStateException(parseFriendlyError(error), error)
+        }
 
     fun parseFriendlyError(error: Throwable): String {
         return when (error) {

@@ -1,0 +1,309 @@
+CitizenTech - Evidências de execução da API
+Data/hora: 15/11/2026 20:45:00 | API: http://localhost:8081/api
+Resultado: 19/19 casos com o status esperado
+
+Caso    Esperado  Obtido  Resultado  Descrição
+CT-01        200     200  PASSOU    Login válido (cidadã)
+CT-02        401     401  PASSOU    Login com senha errada
+CT-05        401     401  PASSOU    Rota protegida sem token
+CT-07        200     200  PASSOU    Listar locais (cidadã logada)
+CT-08        404     404  PASSOU    Local inexistente
+CT-09        201     201  PASSOU    Registrar barreira
+CT-10        400     400  PASSOU    Registrar barreira inválida (categoria vazia + HTML)
+CT-11        403     403  PASSOU    Cidadã pede relatos de outro usuário
+CT-12a       403     403  PASSOU    Cidadã tenta mudar status (só admin)
+CT-12b       200     200  PASSOU    Admin muda status
+CT-13        409     409  PASSOU    Mudar status de relato já resolvido
+CT-14        204     204  PASSOU    Admin exclui relato
+CT-15        201     201  PASSOU    Sensor acima do limite gera alerta
+CT-15b       200     200  PASSOU    Alerta aparece para o cidadão
+CT-16        401     401  PASSOU    Leitura de sensor sem chave do dispositivo
+CT-17        400     400  PASSOU    Leitura com valor negativo
+CT-18        403     403  PASSOU    Preferências de outra pessoa
+CT-19        403     403  PASSOU    Cidadã tenta cadastrar local (só admin)
+CT-21        200     200  PASSOU    Busca com tentativa de SQL injection
+
+### CT-01 - Login válido (cidadã)
+POST /auth/login
+Corpo: {"email": "ana@citizentech.com", "senha": "Cidadao@2026"}
+Esperado: HTTP 200 | Obtido: HTTP 200 | PASSOU
+Resposta:
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5c...",
+  "tipo": "Bearer",
+  "expiraEm": "2026-11-16T01:44:59.529610100Z",
+  "usuario": {
+    "id": "2",
+    "nome": "Ana Souza",
+    "email": "ana@citizentech.com",
+    "perfil": "CIDADAO"
+  }
+}
+
+### CT-02 - Login com senha errada
+POST /auth/login
+Corpo: {"email": "ana@citizentech.com", "senha": "senhaErrada1"}
+Esperado: HTTP 401 | Obtido: HTTP 401 | PASSOU
+Resposta:
+{
+  "status": 401,
+  "message": "E-mail ou senha inválidos.",
+  "path": "/api/auth/login",
+  "timestamp": "2026-11-15T20:44:59.6188049"
+}
+
+### CT-05 - Rota protegida sem token
+GET /locais
+Esperado: HTTP 401 | Obtido: HTTP 401 | PASSOU
+Resposta:
+{
+  "status": 401,
+  "message": "Faça login para continuar (token ausente, inválido ou expirado).",
+  "path": "/api/locais",
+  "timestamp": "2026-11-15T20:44:59.7622319"
+}
+
+### CT-07 - Listar locais (cidadã logada)
+GET /locais
+Esperado: HTTP 200 | Obtido: HTTP 200 | PASSOU
+Resposta:
+[
+  {
+    "id": "biblioteca",
+    "nome": "Biblioteca Central",
+    "statusAcessibilidade": "Parcial",
+    "ocupacao": 19,
+    "nivelOcupacao": "Moderada"
+  },
+  {
+    "id": "centro-cultural",
+    "nome": "Centro Cultural",
+    "statusAcessibilidade": "Acessível",
+    "ocupacao": 9,
+    "nivelOcupacao": "Baixa"
+  },
+  {
+    "id": "terminal",
+    "nome": "Terminal Central",
+    "statusAcessibilidade": "Acessível",
+    "ocupacao": 34,
+    "nivelOcupacao": "Moderada"
+  },
+  {
+    "id": "ubs-vila",
+    "nome": "UBS Vila Nova",
+    "statusAcessibilidade": "Inacessível",
+    "ocupacao": 0,
+    "nivelOcupacao": "Baixa"
+  }
+]
+
+### CT-08 - Local inexistente
+GET /locais/nao-existe
+Esperado: HTTP 404 | Obtido: HTTP 404 | PASSOU
+Resposta:
+{
+  "status": 404,
+  "message": "Local 'nao-existe' não encontrado.",
+  "path": "/api/locais/nao-existe",
+  "timestamp": "2026-11-15T20:44:59.8128351"
+}
+
+### CT-09 - Registrar barreira
+POST /ocorrencias
+Corpo: {"localId": "terminal", "categoria": "Rampa bloqueada", "descricao": "Carro estacionado em cima da rampa."}
+Esperado: HTTP 201 | Obtido: HTTP 201 | PASSOU
+Resposta:
+{
+  "id": "CT-1101",
+  "localId": "terminal",
+  "localNome": "Terminal Central",
+  "categoria": "Rampa bloqueada",
+  "descricao": "Carro estacionado em cima da rampa.",
+  "status": "Recebida",
+  "criadoEm": "Hoje, 20:44",
+  "progresso": 15,
+  "usuarioId": "2",
+  "usuarioNome": "Ana Souza",
+  "dataCriacao": "2026-11-15T20:44:59.8429275",
+  "dataAtualizacao": "2026-11-15T20:44:59.8429275"
+}
+
+### CT-10 - Registrar barreira inválida (categoria vazia + HTML)
+POST /ocorrencias
+Corpo: {"localId": "terminal", "categoria": "", "descricao": "<script>alert(1)</script>"}
+Esperado: HTTP 400 | Obtido: HTTP 400 | PASSOU
+Resposta:
+{
+  "status": 400,
+  "message": "Dados inválidos. Verifique os campos informados.",
+  "path": "/api/ocorrencias",
+  "timestamp": "2026-11-15T20:44:59.8720898",
+  "erros": {
+    "descricao": "não pode conter os caracteres < ou >",
+    "categoria": "é obrigatória"
+  }
+}
+
+### CT-11 - Cidadã pede relatos de outro usuário
+GET /ocorrencias?usuarioId=3
+Esperado: HTTP 403 | Obtido: HTTP 403 | PASSOU
+Resposta:
+{
+  "status": 403,
+  "message": "Você só pode consultar os seus próprios relatos.",
+  "path": "/api/ocorrencias",
+  "timestamp": "2026-11-15T20:44:59.8776037"
+}
+
+### CT-12a - Cidadã tenta mudar status (só admin)
+PUT /ocorrencias/CT-1101/status
+Corpo: {"status": "Em análise"}
+Esperado: HTTP 403 | Obtido: HTTP 403 | PASSOU
+Resposta:
+{
+  "status": 403,
+  "message": "Seu perfil não tem permissão para esta operação.",
+  "path": "/api/ocorrencias/CT-1101/status",
+  "timestamp": "2026-11-15T20:44:59.9025382"
+}
+
+### CT-12b - Admin muda status
+PUT /ocorrencias/CT-1101/status
+Corpo: {"status": "Em análise"}
+Esperado: HTTP 200 | Obtido: HTTP 200 | PASSOU
+Resposta:
+{
+  "id": "CT-1101",
+  "localId": "terminal",
+  "localNome": "Terminal Central",
+  "categoria": "Rampa bloqueada",
+  "descricao": "Carro estacionado em cima da rampa.",
+  "status": "Em análise",
+  "criadoEm": "Hoje, 20:44",
+  "progresso": 45,
+  "usuarioId": "2",
+  "usuarioNome": "Ana Souza",
+  "dataCriacao": "2026-11-15T20:44:59.842928",
+  "dataAtualizacao": "2026-11-15T20:44:59.9068476"
+}
+
+### CT-13 - Mudar status de relato já resolvido
+PUT /ocorrencias/CT-1018/status
+Corpo: {"status": "Recebida"}
+Esperado: HTTP 409 | Obtido: HTTP 409 | PASSOU
+Resposta:
+{
+  "status": 409,
+  "message": "O relato já foi resolvido e não pode mudar de status.",
+  "path": "/api/ocorrencias/CT-1018/status",
+  "timestamp": "2026-11-15T20:44:59.9353979"
+}
+
+### CT-14 - Admin exclui relato
+DELETE /ocorrencias/CT-1101
+Esperado: HTTP 204 | Obtido: HTTP 204 | PASSOU
+Resposta:
+null
+
+### CT-15 - Sensor acima do limite gera alerta
+POST /sensores/leituras
+Corpo: [{"tipo": "chuva", "localId": "centro-cultural", "valor": 42, "unidade": "mm/h"}]
+Esperado: HTTP 201 | Obtido: HTTP 201 | PASSOU
+Resposta:
+{
+  "message": "1 alerta(s) gerado(s) a partir das leituras simuladas.",
+  "leituras": 1,
+  "alertasGerados": 1,
+  "alertasEncerrados": 1,
+  "resultados": [
+    {
+      "sensor": "CHUVA-CUL-01",
+      "tipo": "chuva",
+      "localId": "centro-cultural",
+      "valor": 42.0,
+      "limite": 30,
+      "acimaDoLimite": true,
+      "alertaGerado": "AL-303",
+      "alertasEncerrados": [
+        "AL-301"
+      ]
+    }
+  ]
+}
+
+### CT-15b - Alerta aparece para o cidadão
+GET /alertas
+Esperado: HTTP 200 | Obtido: HTTP 200 | PASSOU
+Resposta:
+[
+  {
+    "id": "AL-303",
+    "tipo": "Clima",
+    "titulo": "Chuva intensa no entorno do Centro Cultural",
+    "valor": 42.0,
+    "unidade": "mm/h",
+    "status": "ATIVO"
+  },
+  {
+    "id": "AL-302",
+    "tipo": "Clima",
+    "titulo": "Chuva intensa no entorno do Terminal Central",
+    "valor": 31.9,
+    "unidade": "mm/h",
+    "status": "ATIVO"
+  }
+]
+
+### CT-16 - Leitura de sensor sem chave do dispositivo
+POST /sensores/leituras
+Corpo: [{"tipo": "chuva", "localId": "centro-cultural", "valor": 50}]
+Esperado: HTTP 401 | Obtido: HTTP 401 | PASSOU
+Resposta:
+{
+  "status": 401,
+  "message": "Faça login para continuar (token ausente, inválido ou expirado).",
+  "path": "/api/sensores/leituras",
+  "timestamp": "2026-11-15T20:45:00.0399744"
+}
+
+### CT-17 - Leitura com valor negativo
+POST /sensores/leituras
+Corpo: [{"tipo": "chuva", "localId": "centro-cultural", "valor": -5}]
+Esperado: HTTP 400 | Obtido: HTTP 400 | PASSOU
+Resposta:
+{
+  "status": 400,
+  "message": "Dados inválidos: não pode ser negativo.",
+  "path": "/api/sensores/leituras",
+  "timestamp": "2026-11-15T20:45:00.046483"
+}
+
+### CT-18 - Preferências de outra pessoa
+GET /preferencias/3
+Esperado: HTTP 403 | Obtido: HTTP 403 | PASSOU
+Resposta:
+{
+  "status": 403,
+  "message": "Você só pode acessar as suas próprias preferências.",
+  "path": "/api/preferencias/3",
+  "timestamp": "2026-11-15T20:45:00.0719165"
+}
+
+### CT-19 - Cidadã tenta cadastrar local (só admin)
+POST /locais
+Corpo: {"id": "x", "nome": "X", "categoria": "X", "endereco": "X", "statusAcessibilidade": "Parcial", "recursos": [], "obstaculos": []}
+Esperado: HTTP 403 | Obtido: HTTP 403 | PASSOU
+Resposta:
+{
+  "status": 403,
+  "message": "Seu perfil não tem permissão para esta operação.",
+  "path": "/api/locais",
+  "timestamp": "2026-11-15T20:45:00.085444"
+}
+
+### CT-21 - Busca com tentativa de SQL injection
+GET /locais?busca=%27%20OR%20%271%27%3D%271
+Esperado: HTTP 200 | Obtido: HTTP 200 | PASSOU
+Resposta:
+[]
