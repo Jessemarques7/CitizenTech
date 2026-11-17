@@ -4,7 +4,7 @@
 
 Pessoas com deficiência ou mobilidade reduzida consultam a acessibilidade e a ocupação de locais públicos, relatam barreiras (calçada quebrada, rampa bloqueada…) e recebem alertas gerados por sensores. A prefeitura/zeladoria (perfil administrador) acompanha e atualiza os relatos.
 
-- **Vídeo pitch:** [LINK PÚBLICO DO VÍDEO]
+- **Vídeo pitch:** [https://drive.google.com/file/d/1Dqm9R9l1VA7-WzcRRmpDHB83YdcQpekq/view?usp=sharing](https://drive.google.com/file/d/1Dqm9R9l1VA7-WzcRRmpDHB83YdcQpekq/view?usp=sharing)
 - **PDF dos entregáveis** (DER, plano de testes, evidências, segurança, IoT): [`docs/CitizenTech_Entregaveis.pdf`](docs/CitizenTech_Entregaveis.pdf)
 - **Integrantes:**
 
@@ -147,6 +147,6 @@ python docs/gerar_pdf.py          # usa Edge ou Chrome em modo headless
 | Ferramenta | Para quê |
 |---|---|
 | Google AI Studio | Estrutura inicial do protótipo do app Android e do protótipo web de referência (`public/assets`) |
-| Claude (Anthropic) | Apoio na escrita do backend (API, segurança, testes), do simulador IoT, dos scripts SQL e da documentação; revisão de texto |
+| Claude (Anthropic) | Apoio na escrita do backend (API, segurança, testes), do simulador IoT, dos scripts SQL e da documentação; revisão de texto; montagem final do vídeo pitch (inserção das gravações do app no celular do vídeo e ajuste da duração para 2:59) |
 
 Todo o código foi revisado, executado e testado pela equipe (veja as evidências em `docs/evidencias`). A equipe entende e consegue explicar cada parte.

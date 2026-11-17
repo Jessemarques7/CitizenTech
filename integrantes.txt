@@ -8,5 +8,5 @@ Integrantes (Nome completo - RM):
 - Murillo Ribeiro de Jesus - RM556126
 - Thiago dos Santos Cordeiro - RM555237
 
-Link do video pitch (publico): [COLE O LINK AQUI]
+Link do video pitch (publico): https://drive.google.com/file/d/1Dqm9R9l1VA7-WzcRRmpDHB83YdcQpekq/view?usp=sharing
 Repositorio: https://github.com/Jessemarques7/CitizenTech
