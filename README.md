@@ -35,6 +35,22 @@ Pessoas com deficiência ou mobilidade reduzida consultam a acessibilidade e a o
 - **Android Studio** (app), com um emulador Android
 - Opcional: conta no **Oracle da FIAP** e SQL Developer
 
+## Como testar (rápido)
+
+Precisa só do **Java 17+** e do **Android Studio** (o Maven e o Gradle são baixados sozinhos pelos wrappers).
+
+1. **Suba a API** e deixe a janela aberta:
+   - Windows: dê dois cliques em [`rodar-api.bat`](rodar-api.bat)
+   - Mac/Linux: `sh rodar-api.sh`
+
+   A API usa um banco H2 em memória já com dados, então não precisa de Oracle. Ela fica pronta quando aparecer `Started CitizenTechApiApplication`.
+2. **Rode o app**: abra a raiz do repositório no Android Studio, espere o Gradle sincronizar e dê *Run* em um emulador.
+3. **Entre** com `ana@citizentech.com` / `Cidadao@2026` (cidadão) ou `admin@citizentech.com` / `Admin@2026` (admin).
+
+> Se o script avisar que a porta 8080 está ocupada, ele sobe na **8081**. Nesse caso, toque em *Configurar endereço da API* no app e informe `http://10.0.2.2:8081/api/`.
+>
+> "Não foi possível conectar à API" no app quer dizer que a API não está rodando ou a URL está errada.
+
 ## 1. Banco de dados (Oracle)
 
 1. Abra o SQL Developer conectado ao Oracle da FIAP (`oracle.fiap.com.br:1521/ORCL`) com seu RM.
@@ -47,7 +63,7 @@ Pessoas com deficiência ou mobilidade reduzida consultam a acessibilidade e a o
 
 ```bash
 cd api
-mvn spring-boot:run
+./mvnw spring-boot:run      # ou: mvn spring-boot:run
 ```
 
 - API: `http://localhost:8080/api`
